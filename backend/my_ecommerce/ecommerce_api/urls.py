@@ -1,0 +1,40 @@
+"""
+URL configuration for ecommerce_api project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/6.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from store.views import ProductViewSet
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+# 1. Setup the Router for your products
+router = DefaultRouter()
+router.register('products', ProductViewSet)
+
+# 2. Define the URLs
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    
+    # This single line handles your GET, POST, PUT, DELETE for api/products/
+    path('api/', include(router.urls)), 
+    
+    # Your JWT Authentication Routes
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+]
